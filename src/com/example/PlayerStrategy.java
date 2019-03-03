@@ -23,42 +23,26 @@ public interface PlayerStrategy {
     void receiveInitialCards(List<Card> cards);
 
     /**
-     * Called to check whether the player wants to draw this turn. Gives this player the top card of
-     * the discard pile at the beginning of their turn, as well as an optional suit for the pile in
-     * case a "8" was played, and the suit was changed.
-     *
-     * By having this return true, the game engine will then call receiveCard() for this player.
-     * Otherwise, playCard() will be called.
-     *
-     * @param topPileCard The card currently at the top of the pile
-     * @param pileSuit The suit that the pile was changed to as the result of an "8" being played.
-     * Will be null if no "8" was played.
-     * @return whether or not the player wants to draw
+     * Called after each card played to ask if the player wants to play bs.
+     * The next person that's going to play that called BS receives the cards if BS fails.
+     * @param rank the rank played
+     * @param numPlayed the number of cards played
+     * @return the decision of the bot AI
      */
-    boolean shouldDrawCard(Card topPileCard, Card.Suit pileSuit);
+    boolean shouldCallBS(Card.Rank rank, int numPlayed);
 
     /**
-     * Called when this player has chosen to draw a card from the deck.
-     *
-     * @param drawnCard The card that this player has drawn
+     * Called whenever the bot says BS when the other player was truthful.
+     * @param cards the cards from the pile to be received by the player
      */
-    void receiveCard(Card drawnCard);
+    void receiveCards(List<Card> cards);
 
     /**
-     * Called when this player is ready to play a card (will not be called if this player drew on
-     * their turn).
-     *
-     * This will end this player's turn.
-     *
-     * @return The card this player wishes to put on top of the pile
+     * The main function called for an AI's turn.
+     * @param currentRank the current rank needed to be played
+     * @return the list of cards to be played (the size tells GameEngine how many cards are played)
      */
-    Card playCard();
-
-    /**
-     * Called if this player decided to play a "8" card. This player should then return the
-     * Card.Suit enum that it wishes to set for the discard pile.
-     */
-    Card.Suit declareSuit();
+    List<Card> playTurn(Card.Rank currentRank);
 
     /**
      * Called at the very beginning of this player's turn to give it context of what its opponents
@@ -73,7 +57,4 @@ public interface PlayerStrategy {
      */
     void reset();
 
-//    List<Card> getHand();
-//
-//    int getPlayerID();
 }
