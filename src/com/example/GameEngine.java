@@ -22,5 +22,8 @@ public class GameEngine {
         currentRank = Card.Rank.ACE;
     }
 
+    public void playGame() {}
+
+    public void playRound() {}
 
 }

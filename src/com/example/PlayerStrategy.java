@@ -57,12 +57,4 @@ public interface PlayerStrategy {
      */
     void reset();
 
-    /**
-     * Called after opponent makes move.
-     *
-     * @param numCardsPlayed Number of cards opponent played
-     * @return A boolean of whether or not the bot calls BS.
-     */
-    boolean callBS(int numCardsPlayed);
-
 }
