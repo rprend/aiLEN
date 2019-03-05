@@ -9,7 +9,7 @@ public class GameEngine {
     /** Integer representations of each player, used to associate players with moves. */
     private List<Integer> ids;
 
-    private List<Card> deck = new ArrayList<>();
+    private List<Card> deck;
     private List<Card> discard;
 
     private Card.Rank currentRank;
@@ -17,8 +17,11 @@ public class GameEngine {
     private Map<PlayerWrapper, Integer> scores = new HashMap<>();
 
     public void startUp(int numPlayers) {
+        deck = Card.getDeck();
         players = new ArrayList<>();
         ids = new ArrayList<>();
+        discard = new ArrayList<>();
+        distributeCards(players, deck);
     }
 
     /**
@@ -116,7 +119,13 @@ public class GameEngine {
      */
     public void distributeCards(List<PlayerWrapper> players, List<Card> deck) {
         Collections.shuffle(deck);
-        // TODO: IMPLEMENT
+        List<List<Card>> passOutCards = new ArrayList<>();
+        for (int i = 0; i < deck.size(); i++) {
+            passOutCards.get(i % players.size()).add(deck.get(i));
+        }
+        for (int i = 0; i < players.size(); i++) {
+            players.get(i).receiveCards(passOutCards.get(i));
+        }
     }
 
 }
