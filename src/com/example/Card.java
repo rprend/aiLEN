@@ -30,7 +30,17 @@ public class Card {
         TEN,
         JACK,
         QUEEN,
-        KING
+        KING;
+
+        final private int NUM_RANKS = 13;
+
+        /**
+         * Returns the next rank, King wrapping back to Ace
+         * @return the new rank
+         */
+        public Rank next() {
+            return values()[(ordinal() + 1) % NUM_RANKS];
+        }
     }
 
     private Suit suit;

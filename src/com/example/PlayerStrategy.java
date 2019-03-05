@@ -3,7 +3,7 @@ package com.example;
 import java.util.List;
 
 /**
- * A contract for how a Crazy8's player will interact with a Crazy8's game engine.
+ * A contract for how a BS's player will interact with a Crazy8's game engine.
  */
 public interface PlayerStrategy {
 

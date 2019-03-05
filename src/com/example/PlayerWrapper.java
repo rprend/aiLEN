@@ -3,10 +3,12 @@ package com.example;
 import java.util.List;
 
 public class PlayerWrapper {
+    private int id;
     private List<Card> hand;
     private PlayerStrategy strategy;
 
-    PlayerWrapper(PlayerStrategy strategy, int playerID, List<Integer> opponentIDs) {
+    PlayerWrapper(int id, PlayerStrategy strategy, int playerID, List<Integer> opponentIDs) {
+        this.id = id;
         this.strategy = strategy;
         strategy.init(playerID, opponentIDs);
     }
@@ -27,7 +29,19 @@ public class PlayerWrapper {
      */
     public List<Card> playTurn(Card.Rank currentRank, List<PlayerTurn> opponentActions) {
         strategy.processOpponentActions(opponentActions);
-        return strategy.playTurn(currentRank);
+
+        List<Card> cardsPlayed = strategy.playTurn(currentRank);
+
+        // Checks for illegal card plays
+        // TODO: PUNISH PLAYERS BY SETTING SCORE TO -1 FOR CHEATING
+        if (cardsPlayed == null || cardsPlayed.size() == 0)
+            throw new SecurityException("Player " + this.id + " played invalid card size!");
+        for (Card card : cardsPlayed) {
+            if (!hand.contains(card)) {
+                throw new SecurityException("Player " + this.id + " played card not in hand!");
+            }
+        }
+        return cardsPlayed;
     }
 
     public boolean shouldCallBS(Card.Rank rank, int numPlayed) {
