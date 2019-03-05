@@ -23,5 +23,8 @@ public class GameEngine {
 
     }
 
+    public void playGame() {}
+
+    public void playRound() {}
 
 }

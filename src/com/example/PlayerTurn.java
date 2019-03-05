@@ -28,4 +28,11 @@ public class PlayerTurn {
      */
     public List<Integer> calledBS;
 
+    /**
+     * Returns true if and only if at least one person calls BS on the cards played
+     * and the cards played weren't what they were declared to be
+     * If nobody calls BS, this returns false
+     */
+    public boolean bsValid;
+
 }
