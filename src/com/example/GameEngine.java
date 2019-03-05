@@ -96,9 +96,11 @@ public class GameEngine {
      * @param players the list of players to remove the list from
      * @return a list of players with the next player being at the front of the list
      */
-    public List<PlayerWrapper> getNextPlayers(PlayerWrapper currentPlayer, List<PlayerWrapper> players) {
+    public static <E> List<E> getNextPlayers(E currentPlayer, List<E> players) {
+
+        // TODO: CHECK FOR CONCURRENTMODIFICATION EXCEPTION ASSOCIATED WITH SUBLIST
         int currentPlayerIndex = players.indexOf(currentPlayer);
-        List<PlayerWrapper> nextPlayers = new ArrayList<>();
+        List<E> nextPlayers = new ArrayList<>();
         if (currentPlayerIndex + 1 != players.size()) {
             nextPlayers.addAll(players.subList(currentPlayerIndex + 1, players.size()));
         }

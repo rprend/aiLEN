@@ -108,4 +108,35 @@ public class CardTest {
         assertEquals(13, numSpades);
         assertEquals(13, numClubs);
     }
+
+    @Test
+    public void cardIncrement() {
+        Rank rank = Rank.ACE;
+        rank = rank.next();
+        assertEquals(Rank.TWO, rank);
+        rank = rank.next();
+        assertEquals(Rank.THREE, rank);
+        rank = rank.next();
+        assertEquals(Rank.FOUR, rank);
+        rank = rank.next();
+        assertEquals(Rank.FIVE, rank);
+        rank = rank.next();
+        assertEquals(Rank.SIX, rank);
+        rank = rank.next();
+        assertEquals(Rank.SEVEN, rank);
+        rank = rank.next();
+        assertEquals(Rank.EIGHT, rank);
+        rank = rank.next();
+        assertEquals(Rank.NINE, rank);
+        rank = rank.next();
+        assertEquals(Rank.TEN, rank);
+        rank = rank.next();
+        assertEquals(Rank.JACK, rank);
+        rank = rank.next();
+        assertEquals(Rank.QUEEN, rank);
+        rank = rank.next();
+        assertEquals(Rank.KING, rank);
+        rank = rank.next();
+        assertEquals(Rank.ACE, rank);
+    }
 }

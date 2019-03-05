@@ -65,4 +65,8 @@ public class PlayerWrapper {
         return this.hand;
     }
 
+    public int getId() {
+        return this.id;
+    }
+
 }
