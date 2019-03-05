@@ -1,5 +1,6 @@
 package com.example;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerWrapper {
@@ -10,6 +11,7 @@ public class PlayerWrapper {
     PlayerWrapper(int id, PlayerStrategy strategy, int playerID, List<Integer> opponentIDs) {
         this.id = id;
         this.strategy = strategy;
+        hand = new ArrayList<>();
         strategy.init(playerID, opponentIDs);
     }
 
@@ -18,6 +20,7 @@ public class PlayerWrapper {
      * @param initialCards the initial hand of cards
      */
     public void receiveInitialCards(List<Card> initialCards) {
+        hand.addAll(initialCards);
         strategy.receiveInitialCards(initialCards);
     }
 
@@ -54,7 +57,12 @@ public class PlayerWrapper {
     }
 
     public void reset() {
+        hand = new ArrayList<>();
         strategy.reset();
+    }
+
+    public List<Card> getHand() {
+        return this.hand;
     }
 
 }

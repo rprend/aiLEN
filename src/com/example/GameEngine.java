@@ -1,6 +1,7 @@
 package com.example;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameEngine {
     /** The list of player wrapper objects. */
@@ -16,21 +17,24 @@ public class GameEngine {
     private Map<PlayerWrapper, Integer> scores = new HashMap<>();
 
     public void startUp(int numPlayers) {
-        deck = Card.getDeck();
-        Collections.shuffle(deck);
         players = new ArrayList<>();
         ids = new ArrayList<>();
-        currentRank = Card.Rank.ACE;
     }
 
     /**
      * Plays a full round of BS with the list of playerwrappers.
      */
-    public void playGame() {
-        while (getWinner(players) == null) {
+    public PlayerWrapper playGame() {
+        currentRank = Card.Rank.ACE;
+        distributeCards(players, Card.getDeck());
+
+        while (true) {
             for (PlayerWrapper player : players) {
                 playTurn(player, players, currentRank, discard);
                 currentRank = currentRank.next();
+
+                if (player.getHand().size() == 0)
+                    return player;
             }
         }
     }
@@ -46,6 +50,7 @@ public class GameEngine {
     public void playTurn(PlayerWrapper currentPlayer, List<PlayerWrapper> players, Card.Rank currentRank, List<Card> discard) {
         // TODO: INCORPORATE OTHER PLAYER TURN TRACKER
         List<Card> cardsPlayed = currentPlayer.playTurn(currentRank, new ArrayList<>());
+        discard.addAll(cardsPlayed);
         int numCardsPlayed = cardsPlayed.size();
 
         Set<PlayerWrapper> calledBS = new HashSet<>();
@@ -55,40 +60,33 @@ public class GameEngine {
         }
 
         if (calledBS.size() != 0) {
-            if (isBS(cardsPlayed, currentRank)) {
-                currentPlayer.receiveCards(cardsPlayed);
-                return;
-            } else {
+            if (cardsMatchRank(cardsPlayed, currentRank)) {
+                // Case player was truthful, give cards to first player that called BS
                 for (PlayerWrapper nextPlayer : getNextPlayers(currentPlayer, players)) {
-                    if (calledBS.contains(nextPlayers)) {
-                        nextPlayer.receiveCards(cardsPlayed);
+                    if (calledBS.contains(nextPlayer)) {
+                        nextPlayer.receiveCards(discard);
                         break;
                     }
                 }
+            } else {
+                // Case player was untruthful, they get the discard pile
+                currentPlayer.receiveCards(discard);
             }
         }
-        discard.addAll(cardsPlayed);
     }
 
-    // TODO: CHANGE BOOLEAN TO OPPOSITE?
     /**
-     * Checks if cards played don't match the matchRank.
+     * Checks if cards played  match the matchRank.
      * @param cardsPlayed cards played by the player
      * @param matchRank the rank all the cards should match
      * @return true IF IT IS BS, false if all match matchRank
      */
-    public boolean isBS(List<Card> cardsPlayed, Card.Rank matchRank) {
+    public boolean cardsMatchRank(List<Card> cardsPlayed, Card.Rank matchRank) {
         for (Card card : cardsPlayed) {
             if (card.getRank() != matchRank)
-                return true;
+                return false;
         }
-        return false;
-    }
-
-
-    public PlayerWrapper getWinner(List<PlayerWrapper> players) {
-        // TODO: IMPLEMENT
-        return null;
+        return true;
     }
 
     /**
@@ -109,11 +107,13 @@ public class GameEngine {
     }
 
     /**
-     * Takes the deck, shuffles, it, and then gives an even distribution of cards to all players.
+     * Takes the deck, shuffles it, and gives an even distribution of cards to all players.
+     * Players that come first will get slightly more cards if number of players is not divisible by 52
      * @param players the players to give cards to
      * @param deck the deck to distribute from
      */
     public void distributeCards(List<PlayerWrapper> players, List<Card> deck) {
+        Collections.shuffle(deck);
         // TODO: IMPLEMENT
     }
 
