@@ -117,9 +117,12 @@ public class GameEngine {
      * @param players the players to give cards to
      * @param deck the deck to distribute from
      */
-    public void distributeCards(List<PlayerWrapper> players, List<Card> deck) {
+    public static void distributeCards(List<PlayerWrapper> players, List<Card> deck) {
         Collections.shuffle(deck);
         List<List<Card>> passOutCards = new ArrayList<>();
+        for (int i = 0; i < players.size(); i++) {
+            passOutCards.add(new ArrayList<>());
+        }
         for (int i = 0; i < deck.size(); i++) {
             passOutCards.get(i % players.size()).add(deck.get(i));
         }

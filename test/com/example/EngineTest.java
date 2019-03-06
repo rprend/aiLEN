@@ -72,4 +72,36 @@ public class EngineTest {
 
         assertEquals(expected, GameEngine.getNextPlayers(currentPlayer, testPlayers));
     }
+
+    @Test
+    public void testDistributeCards() {
+        List<PlayerWrapper> players = new ArrayList<>();
+        players.add(new PlayerWrapper(0, new Player(), 0, null));
+        players.add(new PlayerWrapper(1, new Player(), 1, null));
+        players.add(new PlayerWrapper(2, new Player(), 2, null));
+        players.add(new PlayerWrapper(3, new Player(), 3, null));
+
+        GameEngine.distributeCards(players, Card.getDeck());
+
+        for (PlayerWrapper player : players)
+            assertEquals(13, player.getHand().size());
+    }
+
+    @Test
+    public void testDistributeCardsOddNum() {
+        List<PlayerWrapper> players = new ArrayList<>();
+        players.add(new PlayerWrapper(0, new Player(), 0, null));
+        players.add(new PlayerWrapper(1, new Player(), 1, null));
+        players.add(new PlayerWrapper(2, new Player(), 2, null));
+        players.add(new PlayerWrapper(3, new Player(), 3, null));
+        players.add(new PlayerWrapper(4, new Player(), 4, null));
+
+        GameEngine.distributeCards(players, Card.getDeck());
+        for (int i = 0; i < 2; i++)
+            assertEquals(11, players.get(i).getHand().size());
+
+        for (int i = 2; i < players.size(); i++)
+            assertEquals(10, players.get(i).getHand().size());
+
+    }
 }
