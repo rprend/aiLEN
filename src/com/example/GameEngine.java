@@ -9,6 +9,9 @@ public class GameEngine {
     /** Integer representations of each player, used to associate players with moves. */
     private List<Integer> ids;
 
+    /** Keeps track of all playerturn previously to be fed into the PlayerWrapper. */
+    private List<PlayerTurn> playerTurns = new ArrayList<>();
+
     private List<Card> deck;
     private List<Card> discard;
 
@@ -51,8 +54,8 @@ public class GameEngine {
      *                this will be passed on to the next player in line that calls BS
      */
     public void playTurn(PlayerWrapper currentPlayer, List<PlayerWrapper> players, Card.Rank currentRank, List<Card> discard) {
-        // TODO: INCORPORATE OTHER PLAYER TURN TRACKER
-        List<Card> cardsPlayed = currentPlayer.playTurn(currentRank, new ArrayList<>());
+
+        List<Card> cardsPlayed = currentPlayer.playTurn(currentRank, playerTurns);
         discard.addAll(cardsPlayed);
         int numCardsPlayed = cardsPlayed.size();
 
@@ -62,8 +65,10 @@ public class GameEngine {
                 calledBS.add(opponent);
         }
 
+        boolean cardsTruthful = false;
         if (calledBS.size() != 0) {
-            if (cardsMatchRank(cardsPlayed, currentRank)) {
+            cardsTruthful = cardsMatchRank(cardsPlayed, currentRank);
+            if (cardsTruthful) {
                 // Case player was truthful, give cards to first player that called BS
                 for (PlayerWrapper nextPlayer : getNextPlayers(currentPlayer, players)) {
                     if (calledBS.contains(nextPlayer)) {
@@ -76,6 +81,18 @@ public class GameEngine {
                 currentPlayer.receiveCards(discard);
             }
         }
+
+        PlayerTurn playerTurn = new PlayerTurn();
+        playerTurn.playerId = currentPlayer.getId();
+        playerTurn.rank = currentRank;
+        playerTurn.numCardsPlayed = numCardsPlayed;
+        playerTurn.bsValid = !cardsTruthful;
+        playerTurn.calledBS = calledBS
+                                    .stream()
+                                    .map(PlayerWrapper::getId)
+                                    .collect(Collectors.toList());
+        playerTurns.add(playerTurn);
+        trimList(playerTurns, players.size());
     }
 
     /**
@@ -129,6 +146,22 @@ public class GameEngine {
         for (int i = 0; i < players.size(); i++) {
             players.get(i).receiveCards(passOutCards.get(i));
         }
+    }
+
+    /**
+     * Returns a list that contains only the last newSize amount of moves.
+     * Note that this should also include the the previous move the current player played.
+     * @param turns the uncut list of PlayerTurn
+     * @param newSize the new size of the array
+     * @return the refreshed list with only numPlayers size list
+     */
+    public <E> List<E> trimList(final List<E> turns, int newSize) {
+        List<E> refreshedList = new ArrayList<>(turns);
+
+        while (refreshedList.size() > newSize) {
+            refreshedList.remove(0);
+        }
+        return refreshedList;
     }
 
 }
